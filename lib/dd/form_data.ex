@@ -45,7 +45,6 @@ defmodule DD.FormData do
       hidden:  form_for_hidden(record),
       options: Keyword.put_new(opts, :method, form_for_method(record))
     }
-    |> IO.inspect
   end
 
   def to_form(a, b, c, d) do

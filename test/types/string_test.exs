@@ -76,7 +76,6 @@ defmodule DDStringTest do
       
       pass_expect([matches: "123"], [matches: ~r/123/]),
     ]
-    |> IO.inspect
     |> Enum.each(fn { pass, expect } ->
       options = DTS.from_options(:name, pass)
       

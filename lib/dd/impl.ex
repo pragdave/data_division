@@ -113,8 +113,6 @@ defmodule DD.Impl do
         { name, type.from_display_value(default) }
       end)
       |> Enum.into(%{})
-    
-      |> IO.inspect
   end
   
 end

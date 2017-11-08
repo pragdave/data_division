@@ -157,6 +157,20 @@ So, we could do something like:
     `String.to_integer`
   * outgoing values: none
 
+* (`float`)[...]`:`_name_
+
+  Options:
+  
+  * `min:` _min_value_
+  * `max:` _max_value_
+
+  Conversion:
+  
+  * incoming values: incoming strings are converted using
+    `String.to_float` or `String.to_integer`. Incoming integers are
+    converted by adding `0.0`
+  * outgoing values: none
+
 
 * etc  
 

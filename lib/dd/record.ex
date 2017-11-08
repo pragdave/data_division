@@ -24,7 +24,7 @@ defmodule DD.Record do
     |> Enum.map(fn {name, value} ->
       name = name |> to_atom()
       value = value |> fields[name].type.from_display_value()
-      IO.inspect({ name, value })
+      { name, value }
     end)
     |> to_map
   end
