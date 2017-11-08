@@ -1,12 +1,9 @@
 defmodule DD.Record do
 
   def from(module, new_values) do
-    values =
-      module.__defaults
-      |> Map.merge(atomize_keys(new_values) |> to_map)
-
-    IO.puts "\n\n*****convert from external to internal*****\n\n"
-
+    new_values = convert_incoming_types(new_values, module.__fields)
+    
+    values = Map.merge(module.__defaults, new_values)
     
     module.__blank_record
     |> Map.put(:values, values)
@@ -22,6 +19,17 @@ defmodule DD.Record do
 
   ############################################################
 
+  defp convert_incoming_types(values, fields) do
+    values
+    |> Enum.map(fn {name, value} ->
+      name = name |> to_atom()
+      value = value |> fields[name].type.from_display_value()
+      IO.inspect({ name, value })
+    end)
+    |> to_map
+  end
+
+  
   defp to_map(new_values) when is_map(new_values) do
     new_values
   end
@@ -30,15 +38,8 @@ defmodule DD.Record do
     new_values |> Enum.into(%{})
   end
 
-  defp atomize_keys(map) do
-    map
-    |> Enum.map(&atomize_key/1)
-    |> Enum.into(%{})
-  end
-
-  defp atomize_key(pair = {k, v}) when is_atom(k), do: pair
-
-  defp atomize_key({k, v}), do: {String.to_atom(k), v}
+  defp to_atom(k) when is_atom(k), do: k
+  defp to_atom(k),                 do: String.to_atom(k)
 
 
 end

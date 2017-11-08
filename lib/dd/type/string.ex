@@ -4,16 +4,8 @@ defmodule DD.Type.String do
   @behaviour DD.Type.Behaviour
   ########################################
 
-  def from_spec(name, spec) do
-    quote do
-      {
-        unquote(name),
-        %{
-          type:    unquote(__MODULE__),
-          options: unquote(spec |> valid_options() |> Macro.escape)
-        }
-      }
-    end
+  def from_options(_name, spec) do
+    spec |> valid_options()
   end
   
 

@@ -4,18 +4,9 @@ defmodule DD.Impl do
 
     field_list = normalize_field_list(field_list)
 
-    defaults =
-      field_list
-      |> Code.eval_quoted
-      |> elem(0)
-      |> Enum.map(fn { name, rest } -> { name, rest.options[:default] } end)
-      |> Enum.filter(fn {_name, default} -> default end)
-      |> Enum.into(%{})
-    
-      |> IO.inspect
-      
-    quote do
+    defaults = extract_defaults_from(field_list)
 
+    quote do
       try do
 
         @__fields unquote(field_list)
@@ -83,7 +74,47 @@ defmodule DD.Impl do
   when is_atom(name) and is_list(spec) do
     type_module = DD.Type.find_definition(type)
     {options, _} = spec |> Code.eval_quoted(spec)
-    type_module.from_spec(name, options)
+    spec = type_module.from_options(name, options)
+    quote do
+      {
+        unquote(name),
+        %{
+          type:    unquote(type_module),
+          options: unquote(spec |> Macro.escape)
+        }
+      }
+    end
+
+  end
+
+
+  # World's ugliest function. We take the list of fields,
+  # which is quoted code. We evaluation it to get a list of fields
+  # as terms. These look like
+  #
+  #    { name, {type: type, options: options }}
+  #
+  # We extract the name, type, and default value, eliminate
+  # fields with no default, run that default through the
+  # type-specific external-to-internal convertor, then
+  # return a map of { name, internal_default} values.
+  
+  defp extract_defaults_from(field_list) do
+    field_list
+      |> Code.eval_quoted
+      |> elem(0)
+      |> Enum.map(fn { name, rest } ->
+        { name, rest.type, rest.options[:default] }
+      end)
+      |> Enum.filter(fn {_name, type, default } ->
+        default
+      end)
+      |> Enum.map(fn { name, type, default } ->
+        { name, type.from_display_value(default) }
+      end)
+      |> Enum.into(%{})
+    
+      |> IO.inspect
   end
   
 end

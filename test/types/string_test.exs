@@ -2,6 +2,8 @@
 defmodule DDStringTest do
   use ExUnit.Case
 
+  import DD.TestHelpers
+  
   ####################### fixtures ###########################
   
   defmodule A do
@@ -49,9 +51,9 @@ defmodule DDStringTest do
     end
   end
 
-  test "A record with an invalid default is marked in error" do
+  test "A record with a non string default is converted" do
     with result = BadDefault.new_record() do
-      assert result.errors ==  [ f1: error("should be a string") ]
+      assert result.values.f1 == "99"
     end
   end
 
@@ -76,11 +78,9 @@ defmodule DDStringTest do
     ]
     |> IO.inspect
     |> Enum.each(fn { pass, expect } ->
-      {{_name, %{ options: options, type: type}}, _} =
-        DTS.from_spec(:name, pass) |> Code.eval_quoted
+      options = DTS.from_options(:name, pass)
       
       assert options == expect
-      assert type == DTS
       end)
   end
 
@@ -95,7 +95,7 @@ defmodule DDStringTest do
     ]
     |> Enum.each(fn option ->
          assert_raise(RuntimeError, ~r/Invalid constraint:/, fn ->
-           DTS.from_spec(:name, option)
+           DTS.from_options(:name, option)
          end)
       end)
   end
@@ -103,6 +103,4 @@ defmodule DDStringTest do
   defp pass_expect(opts), do: { opts, opts }
   
   defp pass_expect(pass, expect), do: { pass, expect }
-
-  defp error(msg), do: { msg, [] }
 end

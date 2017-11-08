@@ -18,7 +18,7 @@ defmodule DD.Type.Behaviour do
 
   In the first example above, `from_spec` would we called with
 
-      DD.String.FromSpec(:name, [ min: 2, max: 50 ])
+      DD.String.from_options(:name, [ min: 2, max: 50 ])
 
   Values that are stored in the field structure have potentially been
   updated to work with this type. For example, if you pass a string as
@@ -27,7 +27,7 @@ defmodule DD.Type.Behaviour do
 
   """
 
-  @callback from_spec(atom(), keyword()) :: { module(), atom(), Keyword.t }
+  @callback from_options(atom(), keyword()) :: { module(), atom(), Keyword.t }
 
   
   
@@ -107,13 +107,13 @@ defmodule DD.Type do
       _ ->
         nil
     end
-    case function_exported?(module, :from_spec, 2) do
+    case function_exported?(module, :from_options, 2) do
       true ->
         module
       _ ->
         raise """
            Invalid data type «#{inspect type}». 
-           Module #{inspect module} doesn't define `from_spec/2`.
+           Module #{inspect module} doesn't define `from_options/2`.
            """
     end
   end

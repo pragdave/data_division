@@ -126,6 +126,11 @@ So, we could do something like:
        
 ## Built-in Types
 
+* All type accept the option:
+
+  * `default:` _a type appropriate value_
+
+
 * (`string`)[...]`:`_name_
 
   Options:
@@ -133,9 +138,26 @@ So, we could do something like:
   * `min:` _min_length_
   * `max:` _max_length_
   * `matches:` _string_ or _regex_
+
+  Conversion:
   
-  * `default:` _a binary_
+  * incoming values: nonstrings are converted using inspect
+  * outgoing values: none
+
+* (`int`)[...]`:`_name_
+
+  Options:
   
+  * `min:` _min_value_
+  * `max:` _max_value_
+
+  Conversion:
+  
+  * incoming values: incoming strings are converted using
+    `String.to_integer`
+  * outgoing values: none
+
+
 * etc  
 
 ## Adding Your Own Types
