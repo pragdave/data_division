@@ -34,7 +34,7 @@ defmodule DD.Type.Int do
 
   # if the conversion fails, pass in whatever we have, because
   # validation will catch it
-  def from_display_value(value)  when is_binary(value) do
+  def from_display_value(value, _options)  when is_binary(value) do
     try do
       String.to_integer(value)
     rescue
@@ -43,7 +43,7 @@ defmodule DD.Type.Int do
     end
   end
 
-  def from_display_value(value) do
+  def from_display_value(value, _options) do
    value
   end
 

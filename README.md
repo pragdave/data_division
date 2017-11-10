@@ -126,9 +126,15 @@ So, we could do something like:
        
 ## Built-in Types
 
-* All type accept the option:
+* All type accept the options:
 
   * `default:` _a type appropriate value_
+  
+  * `optional:` _defaults to `true` unless a default was provided
+  
+    In this world, an optional field is one that may have a nil value.
+    Think of it as corresponding to the database `not null`
+    constraint.
 
 
 * (`string`)[...]`:`_name_
@@ -170,6 +176,25 @@ So, we could do something like:
     `String.to_float` or `String.to_integer`. Incoming integers are
     converted by adding `0.0`
   * outgoing values: none
+
+* (`bool`)[...]`:`_name_
+
+  Options:
+  
+  * `show_as` _{ true-values, false-values }__
+
+    `true-values` is a string or a list of strings. It this field is 
+    set to one of these, it will have an internal value of `true`. `false-values` work the same way for `false`.
+    
+    If not specified, `show_as:` defaults to `[ "true", "false" ]`.
+
+  Conversion:
+  
+  * incoming values: incoming strings are converted using
+    `show_as:` to either true or false.
+  * outgoing values: the first true or false value in `ahow_as:`
+    is used.
+
 
 
 * etc  

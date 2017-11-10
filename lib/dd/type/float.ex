@@ -28,17 +28,17 @@ defmodule DD.Type.Float do
     "#{inspect value} should be a float"
   end
   
-  def to_display_value(value) do
+  def to_display_value(value, _) do
     value
   end
 
   # if the conversion fails, pass in whatever we have, because
   # validation will catch it
-  def from_display_value(value) when is_integer(value) do
+  def from_display_value(value, _options) when is_integer(value) do
     value + 0.0
   end
   
-  def from_display_value(value) when is_binary(value) do
+  def from_display_value(value, _options) when is_binary(value) do
     try do
       to_float(value)
     rescue
@@ -47,7 +47,7 @@ defmodule DD.Type.Float do
     end
   end
 
-  def from_display_value(value) do
+  def from_display_value(value, _options) do
    value
   end
 

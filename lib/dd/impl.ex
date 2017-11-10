@@ -75,6 +75,8 @@ defmodule DD.Impl do
     type_module = DD.Type.find_definition(type)
     {options, _} = spec |> Code.eval_quoted(spec)
     spec = type_module.from_options(name, options)
+           |> handle_global_options()
+
     quote do
       {
         unquote(name),
@@ -101,18 +103,42 @@ defmodule DD.Impl do
   
   defp extract_defaults_from(field_list) do
     field_list
-      |> Code.eval_quoted
-      |> elem(0)
-      |> Enum.map(fn { name, rest } ->
-        { name, rest.type, rest.options[:default] }
-      end)
-      |> Enum.filter(fn {_name, type, default } ->
-        default
-      end)
-      |> Enum.map(fn { name, type, default } ->
-        { name, type.from_display_value(default) }
-      end)
-      |> Enum.into(%{})
+    |> Code.eval_quoted
+    |> elem(0)
+    |> Enum.map(fn { name, rest } ->
+      { name, rest.type, rest.options, rest.options[:default] }
+    end)
+    |> Enum.map(&maybe_convert_from_display/1)
+    |> Enum.into(%{})
+  end
+
+  defp maybe_convert_from_display({name, type, _, nil}) do
+    { name, nil }
+  end
+
+  defp maybe_convert_from_display({name, type, options, value}) do
+    { name, type.from_display_value(value, options) }
   end
   
+  # This handles setting the optional flag. If `:opt` has been
+  # given, remap it to `:optional`. If `:optional` is present, then we're
+  # good. Otherwise set `:optional` to false.
+  
+  defp handle_global_options(spec) do
+    convert_opt_to_optional(spec)
+  end
+
+  defp convert_opt_to_optional(spec) do
+    cond do
+      Keyword.has_key?(spec, :optional) ->
+        spec
+      Keyword.has_key?(spec, :opt) ->
+        opt = spec[:opt]
+        spec
+        |> Keyword.delete(:opt)
+        |> Keyword.put(:optional, opt)
+      true ->
+        Keyword.put(spec, :optional, false)
+    end
+  end
 end

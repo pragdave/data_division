@@ -22,13 +22,20 @@ defmodule DD.Validate do
   end
 
 
-  defp errors_for_one_field({name, defn}, { record, result }) do
+  defp errors_for_one_field({name, defn}, accum = { record, result }) do
     value = record.values[name]
-    error =
-      cross_type_validations(value, defn.options) ||
-      type_specific_validations(defn.type, value, defn.options)
+    optional = defn.options[:optional]
+
+    # if a field is optional, then nil is always valid
+    if value == nil && optional do
+      accum
+    else
+      error =
+        cross_type_validations(value, defn.options) ||
+        type_specific_validations(defn.type, value, defn.options)
     
-    { record, [ { name, { error, [] } } | result ] }
+      { record, [ { name, { error, [] } } | result ] }
+    end
   end
 
 
@@ -37,19 +44,18 @@ defmodule DD.Validate do
   ####################################
   
   defp cross_type_validations(value, specs) do
-    validate_present(value, specs[:default])
+    validate_present(value, specs[:optional])
   end
 
-  defp validate_present(value, _default = nil) when value == nil do
-    "requires a value"
+  defp validate_present(_value, optional) when optional do
   end
 
-  defp validate_present(value, _default = nil) when value == "" do
-    "requires a value"
-  end
-
-  defp validate_present(a, b) do
-    nil
+  defp validate_present(value, optional) do
+    if value == nil || value == "" do
+      "requires a value"
+    else
+      nil
+    end
   end
 
   #########################################

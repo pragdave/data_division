@@ -23,7 +23,8 @@ defmodule DD.Record do
     values
     |> Enum.map(fn {name, value} ->
       name = name |> to_atom()
-      value = value |> fields[name].type.from_display_value()
+      options = fields[name].options
+      value = fields[name].type.from_display_value(value, options)
       { name, value }
     end)
     |> to_map

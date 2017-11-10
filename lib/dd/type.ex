@@ -36,13 +36,13 @@ defmodule DD.Type.Behaviour do
   Convert a value to a string that will be suitable for display (for
   example as the value of an <input> tag.
   """
-  @callback to_display_value(Any.t) :: String.t
+  @callback to_display_value(Any.t, Keyword.t) :: String.t
 
   @doc """
   Convert a string external representation of a value into into
   it's internal representation
   """
-  @callback from_display_value(String.t) :: Any.t
+  @callback from_display_value(String.t, Keyword.t) :: Any.t
 
   
   @doc """
@@ -75,7 +75,8 @@ defmodule DD.Type do
     |> check_module_valid(type)
   end
 
-  def valid_option(spec = {:default, _}) do
+  def valid_option(spec = {option_name, _})
+    when option_name in [ :default, :optional, :opt ] do
     spec
   end
 

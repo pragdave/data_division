@@ -65,7 +65,7 @@ defmodule DD.FormData do
             computed
         end
     end
-    |> field_spec.type.to_display_value()
+    |> field_spec.type.to_display_value(field_spec)
   end
 
   def input_type(%{types: types}, _, field) do

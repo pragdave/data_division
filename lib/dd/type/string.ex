@@ -18,15 +18,15 @@ defmodule DD.Type.String do
     || validate_matches(value, specs[:matches])
   end
 
-  def to_display_value(value) do
+  def to_display_value(value, _) do
     value
   end
 
-  def from_display_value(value)  when is_binary(value) do
+  def from_display_value(value, _options)  when is_binary(value) do
     value
   end
 
-  def from_display_value(value) do
+  def from_display_value(value, _options) do
     inspect(value)
   end
 
