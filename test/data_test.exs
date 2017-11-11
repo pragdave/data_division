@@ -2,6 +2,7 @@ defmodule DDTest do
   use ExUnit.Case
   doctest DD
 
+  import DD.TestHelpers
 
   describe "defaults:" do
 
@@ -87,13 +88,8 @@ defmodule DDTest do
       assert result.errors == []
       assert result.values.f1 == "cat"
       result = C.update(result, f1: "doggie")
-      assert result.errors ==
-        [f1:
-         {
-           "cannot be longer than 5 characters (its length is 6)",
-           []
-         }
-        ]
+      assert_errors(result,
+        f1: { "cannot be longer than", max: 5, length: 6 })
     end
   end
   

@@ -24,7 +24,7 @@ defmodule DD.Record do
   
   def hidden_fields(module) do
     module.__fields()
-    |> Enum.filter(fn {name, defn} -> defn.options[:hidden] end)
+    |> Enum.filter(fn {_name, defn} -> defn.options[:hidden] end)
     |> Enum.map(&elem(&1, 0))
   end
 

@@ -57,7 +57,7 @@ defmodule DD.Impl do
   end
 
 
-  defp normalize_field_list({:__block__, context, fields}) do
+  defp normalize_field_list({:__block__, _context, fields}) do
       fields
       |> Enum.map(&convert_one_field/1)
   end
@@ -71,7 +71,7 @@ defmodule DD.Impl do
     convert_one_field({type, context, [ name, [] ]})
   end
 
-  defp convert_one_field({type, context, [ name, spec ]})
+  defp convert_one_field({type, _context, [ name, spec ]})
   when is_atom(name) and is_list(spec) do
     type_module = DD.Type.find_definition(type)
     {options, _} = spec |> Code.eval_quoted(spec)
@@ -113,7 +113,7 @@ defmodule DD.Impl do
     |> Enum.into(%{})
   end
 
-  defp maybe_convert_from_display({name, type, _, nil}) do
+  defp maybe_convert_from_display({name, _type, _, nil}) do
     { name, nil }
   end
 

@@ -15,7 +15,7 @@ defmodule DD.Type.Int do
       |> validate(specs)
     rescue
       ArgumentError ->
-        "#{value} should be an integer"
+        { "%{value} should be an integer", value: inspect(value) }
     end
   end
   
@@ -25,7 +25,7 @@ defmodule DD.Type.Int do
   end
 
   def validate(value, _) do
-    "#{inspect value} should be an integer"
+    { "%{value} should be an integer", value: inspect(value) }
   end
   
   def to_display_value(value, _spec) do
@@ -60,9 +60,16 @@ defmodule DD.Type.Int do
   defp validate_range(value, min, max) do
     cond do
       min && value < min ->
-        "must be at least #{min} (currently #{value})"
+        {
+          "must be at least %{min} (currently %{value})",
+          min: min, value: value
+        }
+          
       max && value > max ->
-        "cannot be greater than #{max} (currently #{value})"
+        {
+          "cannot be greater than %{max} (currently %{value})",
+          max: max, value: value
+        }
       true ->
         nil
     end

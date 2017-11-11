@@ -14,7 +14,9 @@ defmodule DD.Type.Bool do
   
   def validate(true, _), do: nil
   def validate(false, _), do: nil
-  def validate(other, _), do: "#{inspect other} should be a boolean"
+  def validate(other, _) do
+    { "%{other} should be a boolean", [ other: inspect(other) ] }
+  end
 
 
   # choose the first of the available options

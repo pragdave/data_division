@@ -90,20 +90,24 @@ defmodule DDFloatTest do
   
   test "Minimum checked" do
     with result = WithFloats.new_record(min2: 1) do
-      assert result.errors == [min2: error("must be at least 2.0 (currently 1.0)")]
+      assert_errors(result,
+        min2: { "must be at least", min: 2, value: 1.0 }
+      )
   
     end
   end
   
   test "Maximum checked" do
     with result = WithFloats.new_record(max4: 5) do
-      assert result.errors == [ max4: error("cannot be greater than 4.0 (currently 5.0)") ]
+      assert_errors(result,
+        max4: { "cannot be greater than", max: 4.0, value: 5.0 }
+        )
     end
   end
   
   test "A record with an invalid default is marked in error" do
     with result = BadDefault.new_record() do
-      assert result.errors ==  [ f1: error(":abc should be a float") ]
+      assert_errors(result, f1: {"should be a float", value: ":abc"})
     end
   end
   # # 

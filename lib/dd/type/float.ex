@@ -15,7 +15,7 @@ defmodule DD.Type.Float do
       |> validate(specs)
     rescue
       ArgumentError ->
-        "#{value} should be a float"
+        { "%{value} should be a float", value: inspect(value) }
     end
   end
   
@@ -25,7 +25,7 @@ defmodule DD.Type.Float do
   end
 
   def validate(value, _) do
-    "#{inspect value} should be a float"
+    { "%{value} should be a float", value: inspect(value) }
   end
   
   def to_display_value(value, _) do
@@ -64,9 +64,15 @@ defmodule DD.Type.Float do
   defp validate_range(value, min, max) do
     cond do
       min && value < min ->
-        "must be at least #{min} (currently #{value})"
+        {
+          "must be at least %{min} (currently %{value})",
+          min: min, value: value
+        }
       max && value > max ->
-        "cannot be greater than #{max} (currently #{value})"
+        {
+          "cannot be greater than %{max} (currently %{value})",
+          max: max, value: value
+        }
       true ->
         nil
     end
@@ -106,7 +112,7 @@ defmodule DD.Type.Float do
   end
   
   defp to_float(value) do
-    raise ArgumentError, "#{value} can't be represented as a float"
+    raise ArgumentError, "#{inspect value} can't be represented as a float"
   end
   
 end

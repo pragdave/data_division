@@ -39,7 +39,12 @@ defmodule DDBoolTest do
   
   test "A record with an invalid default is marked in error" do
     with result = BadDefault.new_record() do
-      assert result.errors ==  [ f1: error("\"wombat\" should be a boolean") ]
+      assert_errors(result,
+        f1: {
+          "should be a boolean",
+          other: ~s/"wombat"/
+        }
+      )
     end
   end
   # # 

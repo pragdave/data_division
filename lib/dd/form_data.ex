@@ -24,9 +24,9 @@ defmodule DD.FormData do
 
   `to_form` should return a `Phoenix.HTML.Form` structure:
 
-
   """
 
+  use TODO
 
   def to_form(record, opts) do
 
@@ -47,6 +47,7 @@ defmodule DD.FormData do
     }
   end
 
+  @todo "work out if I even need to implement this"
   def to_form(a, b, c, d) do
     IO.puts "to_form/2 #{inspect [a,b,c,d]}"
   end
@@ -68,7 +69,8 @@ defmodule DD.FormData do
     |> field_spec.type.to_display_value(field_spec)
   end
 
-  def input_type(%{types: types}, _, field) do
+  @todo "implement"
+  def input_type(%{types: _types}, _, field) do
     IO.puts "input type #{inspect field}"
     # type = Map.get(types, field, :string)
     # type = if Ecto.Type.primitive?(type), do: type, else: type.type
@@ -86,10 +88,12 @@ defmodule DD.FormData do
     # end
   end
 
-  def input_validations(%{required: required, validations: validations} = changeset, _, field) do
+  @todo "Implement"
+  def input_validations(%{required: _required, validations: _validations} = _changeset, _, field) do
 
     IO.puts "input validations #{inspect field}"
   end
+  
   defp form_for_hidden(record = %{__struct__: module}) do
     DD.Record.hidden_fields(module)
     |> Enum.map(fn name -> { name, record.values[name] } end)

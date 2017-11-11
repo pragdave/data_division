@@ -3,7 +3,7 @@ defmodule DDD.MixProject do
   
   def project do
     [
-      app:     :data,
+      app:     :dd,
       version: "0.1.0",
       elixir:  "~> 1.6-dev",
       deps:    deps(),
@@ -16,14 +16,17 @@ defmodule DDD.MixProject do
   def application do
     [
       extra_applications: [
-        :logger
+        :logger,
+        :gettext
       ]
     ]
   end
 
   defp deps do
     [
-      { :phoenix_html, ">= 0.0.0", optional: true }
+      { :gettext, ">= 0.0.0" },
+      { :phoenix_html, ">= 0.0.0", optional: true },
+      { :todo, ">= 1.0.0" }
     ]
   end
 end

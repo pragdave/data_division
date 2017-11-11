@@ -34,20 +34,26 @@ defmodule DDStringTest do
 
   test "Minimum length checked" do
     with result = A.new_record(f2: "a") do
-      assert result.errors == [f2: error("must be at least 2 characters long  (its length is 1)")]
+      assert_errors(result,
+        f2: { "must be at least", min: 2, length: 1 }
+      )
 
     end
   end
 
   test "Maximum length checked" do
     with result = A.new_record(f3: "abcde") do
-      assert result.errors == [ f3: error("cannot be longer than 4 characters (its length is 5)") ]
+      assert_errors(result,
+        f3: { "cannot be longer than", max: 4, length: 5 }
+      )
     end
   end
 
   test "Regex matches" do
     with result = A.new_record(f5: "abc") do
-      assert result.errors == [ f5: error("must match the pattern ~r/2/") ]
+      assert_errors(result,
+        f5: { "must match the pattern", re: "~r/2/" }
+      )
     end
   end
 

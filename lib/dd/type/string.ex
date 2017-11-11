@@ -10,7 +10,7 @@ defmodule DD.Type.String do
   
 
   def validate(value, _) when not is_binary(value) do
-    "should be a string"
+    { "%{value} should be a string", inspect(value) }
   end
 
   def validate(value, specs) do
@@ -43,9 +43,16 @@ defmodule DD.Type.String do
   defp validate_length(length,  min, max) do
     cond do
       min && length < min ->
-        "must be at least #{min} characters long  (its length is #{length})"
+        {
+          "must be at least %{min} characters long  (its length is %{length})",
+          min: min, length: length
+        }
+        
       max && length > max ->
-        "cannot be longer than #{max} characters (its length is #{length})"
+        {
+          "cannot be longer than %{max} characters (its length is %{length})",
+          max: max, length: length
+        }
       true ->
         nil
     end
@@ -61,7 +68,7 @@ defmodule DD.Type.String do
     if value =~ re do
       nil
     else
-      "must match the pattern #{inspect re}"
+      { "must match the pattern %{re}", re: inspect(re) }
     end
   end
 
