@@ -1,16 +1,27 @@
 defmodule DD.Record do
 
   def from(module, new_values) do
-    new_values = convert_incoming_types(new_values, module.__fields)
+    base =
+      module.__blank_record
+      |> Map.put(:values, module.__defaults)
     
-    values = Map.merge(module.__defaults, new_values)
+    update(module, base, new_values)
+  end
+  
+  def update(module, current, new_values) do
+    values =
+      new_values
+      |> convert_incoming_types(module.__fields)
+
+    values = Map.merge(current.values, values)
     
-    module.__blank_record
+    current
     |> Map.put(:values, values)
     |> Map.put(:fields, module.__fields)
     |> DD.Validate.update_errors(module)
   end
 
+  
   def hidden_fields(module) do
     module.__fields()
     |> Enum.filter(fn {name, defn} -> defn.options[:hidden] end)

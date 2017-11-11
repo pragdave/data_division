@@ -47,7 +47,8 @@ defmodule DD.Impl do
         DD.Record.from(__MODULE__, values)
       end
 
-      def update(values) do
+      def update(current = %__MODULE__{}, new_values) do
+        DD.Record.update(__MODULE__, current, new_values)
       end
 
       def valid?(%{ errors: %{}}), do: true

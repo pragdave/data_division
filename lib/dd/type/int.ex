@@ -28,7 +28,7 @@ defmodule DD.Type.Int do
     "#{inspect value} should be an integer"
   end
   
-  def to_display_value(value) do
+  def to_display_value(value, _spec) do
     value
   end
 

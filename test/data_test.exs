@@ -64,5 +64,37 @@ defmodule DDTest do
       end
     end
   end
+
+  describe "update" do
+    defmodule C do
+      use DD
+      defrecord do
+        string(:f1, min: 3, max: 5)
+      end
+    end
+
+    test "works on a simple record" do
+      result = C.new_record(f1: "cat") 
+      assert result.errors == []
+      assert result.values.f1 == "cat"
+      result = C.update(result, f1: "dog")
+      assert result.errors == []
+      assert result.values.f1 == "dog"
+    end
+
+    test "validates the update" do
+      result = C.new_record(f1: "cat") 
+      assert result.errors == []
+      assert result.values.f1 == "cat"
+      result = C.update(result, f1: "doggie")
+      assert result.errors ==
+        [f1:
+         {
+           "cannot be longer than 5 characters (its length is 6)",
+           []
+         }
+        ]
+    end
+  end
   
 end
