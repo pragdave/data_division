@@ -31,7 +31,8 @@ defmodule DD.Validate do
     else
       error =
         cross_type_validations(value, defn.options) ||
-        type_specific_validations(defn.type, value, defn.options)
+        type_specific_validations(defn.type, value, defn.options) ||
+        custom_validators(value, defn.options[:validate_with])
     
       { record, [ { name, error } | result ] }
     end
@@ -55,6 +56,38 @@ defmodule DD.Validate do
     else
       nil
     end
+  end
+
+  ###################################################################
+  # Custom validations. The validator can be a module (implementing #
+  # `validate(value)` or a function.                                #
+  ###################################################################
+
+  defp custom_validators(_value, nil) do
+    nil
+  end
+
+  defp custom_validators(value, [ validator | rest ]) do
+    custom_validators(value, validator) || custom_validators(value, rest)
+  end  
+
+  defp custom_validators(value, []) do
+    nil
+  end  
+  
+  defp custom_validators(value, validator) when is_atom(validator) do
+    validator.validate(value)
+  end
+
+  defp custom_validators(value, validator) when is_function(validator) do
+    validator.(value)
+  end
+
+  defp custom_validators(other) do
+    raise """
+    validate_with: #{inspect other} is not valid. It expects to
+    receive a module implementing `validate/1` or a function.
+    """
   end
 
   #########################################

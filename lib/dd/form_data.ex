@@ -4,30 +4,80 @@ defmodule DD.FormData do
 
   @moduledoc """
 
-  This is an implementation of Phoenix's FormData protocol, but done as a mixin.
+  This is an implementation of Phoenix's FormData protocol, but done
+  as a mixin.
 
-  Although the FormData protocol is documented at the API level, there's no real
-  explanation of how it is used.
+  Although the FormData protocol is documented at the API level,
+  there's no real explanation of how it is used.
 
   This is cobbled together based on code reading and trial and error.
 
   ### Flow
 
-  You pass Phoenix.HTML.form_for a data holder as its first parameter. This
-  can be am ecto changeset, a connection value, or anything else that implements 
-  Phoenix.HTML.FormData.
+  You pass Phoenix.HTML.form_for a data holder as its first parameter.
+  This can be am ecto changeset, a connection value, or anything else
+  that implements Phoenix.HTML.FormData.
 
   #### `to_form`
 
-  `form_for` starts by calling the `to_form` function in the module corresponding
-  to the struct you pass in, passing it the data holder and the form_for options.
+  `form_for` starts by calling the `to_form` function in the module
+  corresponding to the struct you pass in, passing it the data holder
+  and the form_for options.
 
   `to_form` should return a `Phoenix.HTML.Form` structure:
+
+   * `source:`
+
+     the original record
+
+   * `impl:`
+
+     this module
+
+   * `id:`
+
+     not yet handled
+
+   * `name:`
+
+      the name to be used for this record. This is used as the name of
+      the top-level hash passed between the controller and the
+      template.
+
+   * `errors:`
+
+     A keyword list of errors. Each entry is of the form:
+
+              field_name: { "value %{p1} isn't %{p2}", [ p1: v1, p2: v2 ] }
+
+     where the placeholders in the message text can be completed by
+     the values in the subsequent list. This is compatible with
+     _gettext_.
+
+   * `data:`
+
+     A map containing field names and values.f1
+
+   * `params:`
+
+     Not used here
+
+   * `hidden:`
+
+     the set of hidden fields
+
+   * `options:`
+
+     The options passed to the form builder. If these options
+     do not include a `method:` entry, we add one, using `post` for
+     new records and `put` for existing ones.
 
   """
 
   use TODO
 
+  @todo "work out ids"
+  
   def to_form(record, opts) do
 
     ## %{params: params, data: data} = changeset

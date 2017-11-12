@@ -76,7 +76,7 @@ defmodule DD.Type do
   end
 
   def valid_option(spec = {option_name, _})
-    when option_name in [ :default, :optional, :opt ] do
+    when option_name in [ :default, :optional, :opt, :validate_with ] do
     spec
   end
 

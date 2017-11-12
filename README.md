@@ -136,6 +136,12 @@ So, we could do something like:
     Think of it as corresponding to the database `not null`
     constraint.
 
+  * `validate_with:` _a Module or a function_ (or a list of them)
+  
+    See _Custom Validations` below.
+    
+    Note that validation for a particular field stops on the first
+    validation failure.
 
 * (`string`)[...]`:`_name_
 
@@ -195,9 +201,60 @@ So, we could do something like:
   * outgoing values: the first true or false value in `ahow_as:`
     is used.
 
-
-
 * etc  
+
+### Custom Validations
+
+You can define your own field validators. Each is a function that takes a 
+value and returns either 
+
+    nil
+    
+if the value is valid, or
+
+    { msg_with_placeholders, p1: v1, … }
+    
+if it is invalid. In the latter case the first field in the returned
+tuple is a string containing optional placeholders. The values that
+are to be substituted for each placeholder are given in the subsequent
+keyword list:
+
+    { "%{value} must have exactly %{n} factors", value: 30, n: 2 }
+    
+Add a custom validator to a field using the `validate_with:` option.
+This takes either a single validator or a list of validators.
+
+If a validator is the name of a module, then the field is validted by
+calling the function `validate/1` in that module.
+
+If a validator is a function, then it is called withe the value to
+validate.
+
+For example:
+
+    # This is a validation module
+    defmodule EvenValidator do
+      require Integer
+      def validate(value) when Integer.is_even(value), do: nil
+      def validate(_), do: { "must be even..", [] }
+    end
+
+    # and this module contains validation functions
+    defmodule Validations do
+      require Integer
+      def is_even(value) when Integer.is_even(value), do: nil
+      def is_even(_), do: { "must be even!!", [] }
+    end
+    
+
+    defmodule A do
+      use DD
+      defrecord do
+        int(:even1, default: 2, validate_with: EvenValidator)
+        int(:even2, default: 2, validate_with: &Validations.is_even/1)
+      end
+    end
+
 
 ## Adding Your Own Types
 
