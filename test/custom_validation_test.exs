@@ -92,5 +92,10 @@ defmodule DD.CustomValidationTest do
       result = B.new_record(fizzbuzz: 5)
       assert_errors(result, fizzbuzz: {"is not a multiple of 3", value: 5})
     end
+
+    test "with error on both only returns first" do 
+      result = B.new_record(fizzbuzz: 7)
+      assert_errors(result, fizzbuzz: {"is not a multiple of 3", value: 7})
+    end
   end  
 end

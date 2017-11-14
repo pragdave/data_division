@@ -1,5 +1,15 @@
 defmodule DD.Record do
 
+
+  if Code.ensure_loaded?(Ecto.Changeset) do
+    def from(%Ecto.Changeset{errors: errors, data: data}) do
+      values = module.__defaults |> Map.merge(data)
+      module.__blank_record
+      |> Map.put(:values, values)
+      |> Map.put(:errors, errors)
+    end
+  end
+  
   def from(module, new_values) do
     base =
       module.__blank_record

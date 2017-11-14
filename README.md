@@ -91,9 +91,13 @@ A list of the available types and their options is [below](#types).
 ## Using a Record
 
 You create new instances of a record using
-_Name_.`new_record(values)`.
+_Name_.`new_record(values)`. The `values` you pass in can be a keyword
+list, map, or struct. If `values` is a struct of type
+`Ecto.Changeset`, then values and errors are copied directly from it
+into the record.
 
-This returns a structure containing three entries:
+
+`new_record` returns a structure containing three entries:
 
 * `values`
 
@@ -109,7 +113,7 @@ This returns a structure containing three entries:
 
   A reference to a field definition structure
   
-  
+
 So, we could do something like:
 
        neptune = Planet.new_record(

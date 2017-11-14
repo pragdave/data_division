@@ -71,7 +71,7 @@ defmodule DD.Validate do
     custom_validators(value, validator) || custom_validators(value, rest)
   end  
 
-  defp custom_validators(value, []) do
+  defp custom_validators(_value, []) do
     nil
   end  
   
@@ -83,7 +83,7 @@ defmodule DD.Validate do
     validator.(value)
   end
 
-  defp custom_validators(other) do
+  defp custom_validators(_value, other) do
     raise """
     validate_with: #{inspect other} is not valid. It expects to
     receive a module implementing `validate/1` or a function.
