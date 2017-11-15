@@ -92,5 +92,28 @@ defmodule DDTest do
         f1: { "cannot be longer than", max: 5, length: 6 })
     end
   end
+
+  describe "hidden fields" do
+
+    defmodule D do
+      use DD
+      defrecord do
+        int(:is_hidden, hidden: true)
+        string(:is_visible)
+      end
+    end
+
+    test "are categorized properly" do
+      with result = D.new_record(is_hidden: 123, is_visible: "boo") do
+        assert result.errors == []
+        assert result.values.is_hidden == 123
+        assert result.values.is_visible == "boo"
+
+        assert DD.Record.hidden_fields(result) == [ :is_hidden ]
+        
+      end
+    end
+    
+  end
   
 end

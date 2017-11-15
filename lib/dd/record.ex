@@ -14,7 +14,7 @@ defmodule DD.Record do
     base =
       module.__blank_record
       |> Map.put(:values, module.__defaults)
-    
+
     update(module, base, new_values)
   end
   
@@ -33,11 +33,12 @@ defmodule DD.Record do
 
   
   def hidden_fields(module) do
-    module.__fields()
+    module.fields
     |> Enum.filter(fn {_name, defn} -> defn.options[:hidden] end)
     |> Enum.map(&elem(&1, 0))
   end
 
+  
   ############################################################
 
   defp convert_incoming_types(values, fields) do

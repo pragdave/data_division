@@ -49,6 +49,15 @@ defmodule DDFloatTest do
     end
   end
 
+  defmodule DisplayValue1 do
+    use DD
+    defrecord do
+      float(:a, default: 1.25)
+    end
+  end
+
+  
+
   ###################### tests ###############################
   
   test "Passing integers to float works" do
@@ -88,6 +97,22 @@ defmodule DDFloatTest do
     end
   end
   
+  test "Passing strings to float works" do
+    with result = WithMixed.new_record() do
+      assert result.errors == []
+      result = result |> WithMixed.update(positive: "3.25")
+      assert result.errors == []
+      assert result.values.positive == 3.25
+    end
+  end
+
+  test "Passing invalid strings to float causes an error" do
+    with result = WithMixed.new_record(positive: "1.2 wombats") do
+      assert_errors(result,
+        positive: { "should be a float", value: "\"1.2 wombats\"" })
+    end
+  end
+  
   test "Minimum checked" do
     with result = WithFloats.new_record(min2: 1) do
       assert_errors(result,
@@ -110,54 +135,32 @@ defmodule DDFloatTest do
       assert_errors(result, f1: {"should be a float", value: ":abc"})
     end
   end
-  # # 
-  # test "good options are accepted" do
-  #   alias DD.Type.String, as: DTS
-  # 
-  #   [
-  #     pass_expect([]),
-  # 
-  #     # global options
-  #     
-  #     pass_expect(default: 99),
-  # 
-  #   # string options
-  #     
-  #     pass_expect(min: 3, max: 5),
-  #     pass_expect(matches: ~r/123/),
-  # 
-  #     # string in match is converted to a Regex
-  #     
-  #     pass_expect([matches: "123"], [matches: ~r/123/]),
-  #   ]
-  #   |> IO.inspect
-  #   |> Enum.each(fn { pass, expect } ->
-  #     {{_name, %{ options: options, type: type}}, _} =
-  #       DTS.from_spec(:name, pass) |> Code.eval_quoted
-  #     
-  #     assert options == expect
-  #     assert type == DTS
-  #     end)
-  # end
-  # 
-  # test "bad options are rejected" do
-  #   alias DD.Type.String, as: DTS
-  # 
-  #   [
-  #     [ wombat: 99 ],
-  #     [ min: -1 ],
-  #     [ min: "cow" ],
-  #     [ max: -1 ],
-  #   ]
-  #   |> Enum.each(fn option ->
-  #        assert_raise(RuntimeError, ~r/Invalid constraint:/, fn ->
-  #          DTS.from_spec(:name, option)
-  #        end)
-  #     end)
-  # end
-  # 
-  # defp pass_expect(opts), do: { opts, opts }
-  # 
-  # defp pass_expect(pass, expect), do: { pass, expect }
-  # 
+
+  test "Default to_display_value works" do
+    with result = DisplayValue1.new_record() do
+      assert to_string(result) =~ ~r/a:\s+1\.25/
+    end
+  end
+
+  test "Options must be floats" do
+    assert_raise(RuntimeError, ~r/invalid float/, fn ->
+      defmodule BadOpt do
+        use DD
+        defrecord do
+          float(:a, default: 2, min: "wombat")
+        end
+      end
+    end)
+
+
+    assert_raise(RuntimeError, ~r/invalid float/, fn ->
+      defmodule BadOpt do
+        use DD
+        defrecord do
+          float(:a, default: 2, max: "wombat")
+        end
+      end
+    end)
+  end
+    
 end

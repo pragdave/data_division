@@ -7,9 +7,11 @@ defmodule DD.TestHelpers do
   def error(msg), do: { msg, [] }
 
   def assert_errors(%{ errors: errors }, expected) do
-    assert(
-      Keyword.keys(errors) == Keyword.keys(expected),
-      "checking error keys"
+    errk = Keyword.keys(errors)
+    expk = Keyword.keys(expected)
+    
+    assert(errk == expk,
+      "checking error keys: #{inspect errk} != #{inspect expk}"
     )
     
     for { field, { msg, values }} <- errors do

@@ -29,7 +29,7 @@ defmodule DD.Type.Int do
   end
   
   def to_display_value(value, _spec) do
-    value
+    value |> to_string()
   end
 
   # if the conversion fails, pass in whatever we have, because

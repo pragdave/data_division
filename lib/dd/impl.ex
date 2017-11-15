@@ -3,7 +3,6 @@ defmodule DD.Impl do
   defmacro defrecord(do: field_list) do
 
     field_list = normalize_field_list(field_list)
-
     defaults = extract_defaults_from(field_list)
 
     quote do
@@ -29,7 +28,10 @@ defmodule DD.Impl do
     defdelegate input_value(data, form, field),       to: DD.FormData
     defdelegate input_type(data, form, field),        to: DD.FormData
   end
-    
+
+  defimpl(String.Chars, for: Any) do
+    defdelegate to_string(record), to: DD.Record.ToString
+  end
   
   defmacro __using__(_) do
     quote do
@@ -40,6 +42,7 @@ defmodule DD.Impl do
       defstruct values: nil, errors: %{}, fields: %{}
 
       Protocol.derive(Phoenix.HTML.FormData, __MODULE__)
+      Protocol.derive(String.Chars,          __MODULE__)
 
       def __blank_record, do: %__MODULE__{}
       

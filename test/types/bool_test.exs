@@ -14,7 +14,7 @@ defmodule DDBoolTest do
       bool :yes_no,   default: true,  show_as: { "yes", "no" }
       bool :tick_x,   default: false, show_as: { "✓", "✖" }
       bool :multi_yn, default: true,
-                      show_as: { ~w/y yes sure/, ~w/n no nope/ }
+                      show_as: { ~w/yes y sure/, ~w/no n nope/ }
     end
   end
 
@@ -47,54 +47,40 @@ defmodule DDBoolTest do
       )
     end
   end
-  # # 
-  # test "good options are accepted" do
-  #   alias DD.Type.String, as: DTS
-  # 
-  #   [
-  #     pass_expect([]),
-  # 
-  #     # global options
-  #     
-  #     pass_expect(default: 99),
-  # 
-  #   # string options
-  #     
-  #     pass_expect(min: 3, max: 5),
-  #     pass_expect(matches: ~r/123/),
-  # 
-  #     # string in match is converted to a Regex
-  #     
-  #     pass_expect([matches: "123"], [matches: ~r/123/]),
-  #   ]
-  #   |> IO.inspect
-  #   |> Enum.each(fn { pass, expect } ->
-  #     {{_name, %{ options: options, type: type}}, _} =
-  #       DTS.from_spec(:name, pass) |> Code.eval_quoted
-  #     
-  #     assert options == expect
-  #     assert type == DTS
-  #     end)
-  # end
-  # 
-  # test "bad options are rejected" do
-  #   alias DD.Type.String, as: DTS
-  # 
-  #   [
-  #     [ wombat: 99 ],
-  #     [ min: -1 ],
-  #     [ min: "cow" ],
-  #     [ max: -1 ],
-  #   ]
-  #   |> Enum.each(fn option ->
-  #        assert_raise(RuntimeError, ~r/Invalid constraint:/, fn ->
-  #          DTS.from_spec(:name, option)
-  #        end)
-  #     end)
-  # end
-  # 
-  # defp pass_expect(opts), do: { opts, opts }
-  # 
-  # defp pass_expect(pass, expect), do: { pass, expect }
-  # 
+
+  test "the show_as list is used when setting a field" do
+    with result = Basic.new_record(yes_no: "yes") do
+      assert result.errors == []
+      assert result.values.yes_no  === true
+    end
+    with result = Basic.new_record(yes_no: "no") do
+      assert result.errors == []
+      assert result.values.yes_no  === false
+    end
+  end
+
+  test "any element in  show_as list can be used" do
+    [
+      { "y", true },
+      { "n", false },
+      { "yes", true },
+      { "no",  false },
+      { "sure", true },
+      { "nope", false }
+    ]
+    |> Enum.map(fn {input, expected} ->
+      result = Basic.new_record(multi_yn: input)
+      assert result.values.multi_yn === expected, input
+    end)
+  end
+
+  test "the first element of a show_as list is used as a display value" do
+    result = Basic.new_record(multi_yn: true)
+    assert to_string(result) =~ ~r/multi_yn:\s+yes/
+
+    result = Basic.new_record(multi_yn: false)
+    assert to_string(result) =~ ~r/multi_yn:\s+no/
+
+  end
+  
 end

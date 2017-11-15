@@ -29,7 +29,7 @@ defmodule DD.Type.Float do
   end
   
   def to_display_value(value, _) do
-    value
+    value |> to_string()
   end
 
   # if the conversion fails, pass in whatever we have, because
@@ -87,12 +87,20 @@ defmodule DD.Type.Float do
     |> Enum.map(&valid_option/1)
   end
     
-  defp valid_option({:min, n}) when is_number(n) and n >= 0 do
+  defp valid_option({:min, n}) when is_number(n) do
     { :min, to_float(n) }
   end
   
-  defp valid_option({:max, n}) when is_number(n) and n >= 0 do
+  defp valid_option(opt = {:min, _}) do
+    raise "invalid float in: #{inspect opt}"
+  end
+  
+  defp valid_option({:max, n}) when is_number(n) do
     { :max, to_float(n) }
+  end
+
+  defp valid_option(opt = {:max, _}) do
+    raise "invalid float in: #{inspect opt}"
   end
 
   defp valid_option({name, value}) do
@@ -110,9 +118,4 @@ defmodule DD.Type.Float do
         String.to_integer(value) + 0.0
     end
   end
-  
-  defp to_float(value) do
-    raise ArgumentError, "#{inspect value} can't be represented as a float"
-  end
-  
 end

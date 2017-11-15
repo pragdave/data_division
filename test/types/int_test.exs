@@ -60,54 +60,23 @@ defmodule DDIntTest do
       )
     end
   end
-  # 
-  # test "good options are accepted" do
-  #   alias DD.Type.String, as: DTS
-  # 
-  #   [
-  #     pass_expect([]),
-  # 
-  #     # global options
-  #     
-  #     pass_expect(default: 99),
-  # 
-  #   # string options
-  #     
-  #     pass_expect(min: 3, max: 5),
-  #     pass_expect(matches: ~r/123/),
-  # 
-  #     # string in match is converted to a Regex
-  #     
-  #     pass_expect([matches: "123"], [matches: ~r/123/]),
-  #   ]
-  #   |> IO.inspect
-  #   |> Enum.each(fn { pass, expect } ->
-  #     {{_name, %{ options: options, type: type}}, _} =
-  #       DTS.from_spec(:name, pass) |> Code.eval_quoted
-  #     
-  #     assert options == expect
-  #     assert type == DTS
-  #     end)
-  # end
-  # 
-  # test "bad options are rejected" do
-  #   alias DD.Type.String, as: DTS
-  # 
-  #   [
-  #     [ wombat: 99 ],
-  #     [ min: -1 ],
-  #     [ min: "cow" ],
-  #     [ max: -1 ],
-  #   ]
-  #   |> Enum.each(fn option ->
-  #        assert_raise(RuntimeError, ~r/Invalid constraint:/, fn ->
-  #          DTS.from_spec(:name, option)
-  #        end)
-  #     end)
-  # end
-  # 
-  # defp pass_expect(opts), do: { opts, opts }
-  # 
-  # defp pass_expect(pass, expect), do: { pass, expect }
-  # 
+
+  test "invalid string values are detected" do
+    defmodule B do
+      use DD
+      defrecord do
+        int(:a)
+      end
+    end
+
+    result = B.new_record(a: "123 abc")
+    assert_errors(result,
+      a: { "should be an integer", value: "\"123 abc\"" })
+  end
+
+  test "to display value" do
+    with result = A.new_record() do
+      assert to_string(result) =~ ~r/negative:\s+-123/
+    end
+  end
 end

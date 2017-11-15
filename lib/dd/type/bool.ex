@@ -11,7 +11,6 @@ defmodule DD.Type.Bool do
   end
   
 
-  
   def validate(true, _), do: nil
   def validate(false, _), do: nil
   def validate(other, _) do
@@ -21,11 +20,11 @@ defmodule DD.Type.Bool do
 
   # choose the first of the available options
   def to_display_value(value, options) when value do
-    options.show_as.elem(0) |> hd
+    options[:show_as] |> elem(0) |> hd
   end
 
-  def to_display_value(value, options) when value do
-    options.show_as.elem(1) |> hd
+  def to_display_value(value, options) do
+    options[:show_as] |> elem(1) |> hd
   end
 
   # Find the value in the lists of true or false
@@ -71,7 +70,7 @@ defmodule DD.Type.Bool do
   
   defp valid_option({:show_as, {trues, falses}})
     when is_binary(falses) do
-      valid_option({:show_as, {[trues], [falses]}})
+      valid_option({:show_as, {trues, [falses]}})
   end
   
   defp valid_option({name, value}) do

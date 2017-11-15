@@ -105,6 +105,13 @@ defmodule DDStringTest do
       end)
   end
 
+  test "to display value" do
+    with result = A.new_record() do
+      assert to_string(result) =~ ~r/f1:\s+123/
+    end
+  end
+
+  
   defp pass_expect(opts), do: { opts, opts }
   
   defp pass_expect(pass, expect), do: { pass, expect }

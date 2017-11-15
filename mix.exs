@@ -7,9 +7,11 @@ defmodule DDD.MixProject do
       version: "0.1.0",
       elixir:  "~> 1.6-dev",
       deps:    deps(),
-    
+
+      test_coverage: [tool: ExCoveralls],
+      
       start_permanent:       Mix.env == :prod, 
-      consolidate_protocols: Mix.env != :test,   
+      consolidate_protocols: !(Mix.env in [ :dev, :test ]),   
     ]
   end
 
@@ -22,11 +24,13 @@ defmodule DDD.MixProject do
     ]
   end
 
+  # in deps, add the depedency for only test environment
   defp deps do
     [
-      { :gettext, ">= 0.0.0" },
+      { :gettext,      ">= 0.0.0" },
       { :phoenix_html, ">= 0.0.0", optional: true },
-      { :todo, ">= 1.0.0" }
+      { :todo,         ">= 1.0.0" },
+      { :excoveralls,  ">= 0.0.0", only: :test },
     ]
   end
 end
