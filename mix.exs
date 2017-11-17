@@ -11,7 +11,7 @@ defmodule DDD.MixProject do
       test_coverage: [tool: ExCoveralls],
       
       start_permanent:       Mix.env == :prod, 
-      consolidate_protocols: !(Mix.env in [ :dev, :test ]),   
+      consolidate_protocols: Mix.env not in [ :dev, :test ],
     ]
   end
 

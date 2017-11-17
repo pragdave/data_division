@@ -76,7 +76,11 @@ defmodule DD.Validate do
   end  
   
   defp custom_validators(value, validator) when is_atom(validator) do
-    validator.validate(value)
+    if function_exported?(validator, :validate, 1) do
+      validator.validate(value)
+    else
+      invalid_validator(validator)
+    end
   end
 
   defp custom_validators(value, validator) when is_function(validator) do
@@ -84,12 +88,15 @@ defmodule DD.Validate do
   end
 
   defp custom_validators(_value, other) do
+    invalid_validator(other)
+  end
+
+  defp invalid_validator(other) do
     raise """
     validate_with: #{inspect other} is not valid. It expects to
     receive a module implementing `validate/1` or a function.
     """
   end
-
   #########################################
   # Dispatch to type-specific validations #
   #########################################

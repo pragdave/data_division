@@ -49,18 +49,10 @@ defmodule DD.Record do
       value = fields[name].type.from_display_value(value, options)
       { name, value }
     end)
-    |> to_map
+    |> Enum.into(%{})
   end
 
   
-  defp to_map(new_values) when is_map(new_values) do
-    new_values
-  end
-  
-  defp to_map(new_values) do
-    new_values |> Enum.into(%{})
-  end
-
   defp to_atom(k) when is_atom(k), do: k
   defp to_atom(k),                 do: String.to_atom(k)
 

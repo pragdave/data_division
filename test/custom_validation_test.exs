@@ -97,5 +97,30 @@ defmodule DD.CustomValidationTest do
       result = B.new_record(fizzbuzz: 7)
       assert_errors(result, fizzbuzz: {"is not a multiple of 3", value: 7})
     end
-  end  
+  end
+
+  test "invalid validators are detected 1" do
+    defmodule C do
+      use DD
+      defrecord do
+        string(:a, validate_with: Wombat)
+      end
+    end
+    assert_raise(RuntimeError, ~r/validate_with: Wombat/, fn ->
+      C.new_record(a: "ccc")
+    end)
+  end
+
+  test "invalid validators are detected 2" do
+    defmodule C do
+      use DD
+      defrecord do
+        string(:a, validate_with: 123)
+      end
+    end
+    assert_raise(RuntimeError, ~r/validate_with: 123/, fn ->
+      C.new_record(a: "ccc")
+    end)
+  end
+
 end

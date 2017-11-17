@@ -113,7 +113,20 @@ defmodule DDTest do
         
       end
     end
-    
   end
-  
+
+  test "string keys are converted to atoms" do
+    defmodule E do
+      use DD
+      defrecord do
+        string("a", default: "hello")
+      end
+    end
+
+    with result = E.new_record do
+      result = E.update(result, [{"a", "goodbye"}])
+      IO.inspect result
+      assert result.values.a == "goodbye"
+    end
+  end
 end

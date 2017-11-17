@@ -23,7 +23,7 @@ defmodule DD.Type.Bool do
     options[:show_as] |> elem(0) |> hd
   end
 
-  def to_display_value(value, options) do
+  def to_display_value(_value, options) do
     options[:show_as] |> elem(1) |> hd
   end
 

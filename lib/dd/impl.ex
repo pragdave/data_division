@@ -74,6 +74,11 @@ defmodule DD.Impl do
     convert_one_field({type, context, [ name, [] ]})
   end
 
+  defp convert_one_field({type, context, [ name, _spec ]})
+  when is_binary(name) do
+    convert_one_field({type, context, [ String.to_atom(name), [] ]})    
+  end
+
   defp convert_one_field({type, _context, [ name, spec ]})
   when is_atom(name) and is_list(spec) do
     type_module = DD.Type.find_definition(type)
