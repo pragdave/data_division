@@ -5,7 +5,7 @@ defmodule DD.MixProject do
   @version "0.0.2"
 
   @deps [
-    { :ex_doc,       ">=0.0.0",  only:    :dev  },
+    { :ex_doc,       ">= 0.0.0", only:    :dev  },
     { :gettext,      ">= 0.0.0"                 },
     { :phoenix_html, ">= 0.0.0", optional: true },
     { :todo,         ">= 1.0.0", optional: true },
