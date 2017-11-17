@@ -1,17 +1,38 @@
-defmodule DDD.MixProject do
+defmodule DD.MixProject do
   use Mix.Project
   
+  @name    :dd
+  @version "0.0.1"
+
+  @deps [
+    { :gettext,      ">= 0.0.0" },
+    { :phoenix_html, ">= 0.0.0", optional: true },
+    { :todo,         ">= 1.0.0" },
+    { :excoveralls,  ">= 0.0.0", only: :test },
+  ]
+
+  @description """
+  Create data records (aka structs) with validation and
+  Phoenix form_for compatibility, making it easier to 
+  separate resource applications from your web frontend.
+  """
+
+  ############################################################
+  
   def project do
+    in_production = Mix.env == :prod
     [
-      app:     :dd,
-      version: "0.1.0",
-      elixir:  "~> 1.6-dev",
-      deps:    deps(),
+      app:     @name,
+      version: @version,
+      elixir:  ">= 1.5.0",
+      deps:    @deps,
 
       test_coverage: [tool: ExCoveralls],
-      
-      start_permanent:       Mix.env == :prod, 
-      consolidate_protocols: Mix.env not in [ :dev, :test ],
+      package:       package(),
+      description:   @description,
+
+      start_permanent:       in_production, 
+      consolidate_protocols: in_production,
     ]
   end
 
@@ -24,13 +45,21 @@ defmodule DDD.MixProject do
     ]
   end
 
-  # in deps, add the depedency for only test environment
-  defp deps do
+  defp package do
     [
-      { :gettext,      ">= 0.0.0" },
-      { :phoenix_html, ">= 0.0.0", optional: true },
-      { :todo,         ">= 1.0.0" },
-      { :excoveralls,  ">= 0.0.0", only: :test },
+      files: [
+        "lib", "mix.exs", "README.md",
+      ],
+      maintainers: [
+        "Dave Thomas <dave@pragdave.me>",
+      ],
+      licenses: [
+        "Apache 2 (see the file LICENSE.md for details)"
+      ],
+      links: %{
+        "GitHub" => "https://github.com/pragdave/data_division",
+      }
     ]
   end
+  
 end
