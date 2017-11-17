@@ -9,7 +9,7 @@ defmodule CustomTypeTest do
     assert_raise RuntimeError, ~r/Invalid data type «:unknown»/, fn ->
       defmodule A do
         use DD
-        defrecord do
+        deffieldset do
           unknown(:name)
         end
       end
@@ -20,7 +20,7 @@ defmodule CustomTypeTest do
     assert_raise RuntimeError, ~r/Invalid data type «:isnt»/, fn ->
       defmodule B do
         use DD
-        defrecord do
+        deffieldset do
           isnt(:name)
         end
       end

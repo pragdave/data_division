@@ -8,7 +8,7 @@ defmodule DDStringTest do
   
   defmodule A do
     use DD
-    defrecord do
+    deffieldset do
       string(:f1, default: "123")
       string(:f2, default: "123", min: 2)
       string(:f3, default: "123", max: 4)
@@ -19,7 +19,7 @@ defmodule DDStringTest do
   
   defmodule BadDefault do
     use DD
-    defrecord do
+    deffieldset do
       string(:f1, default: 99)
     end
   end
@@ -27,13 +27,13 @@ defmodule DDStringTest do
   ###################### tests ###############################
   
   test "Default values have no errors" do
-    with result = A.new_record() do
+    with result = A.new() do
       assert result.errors == []
     end
   end
 
   test "Minimum length checked" do
-    with result = A.new_record(f2: "a") do
+    with result = A.new(f2: "a") do
       assert_errors(result,
         f2: { "must be at least", min: 2, length: 1 }
       )
@@ -42,7 +42,7 @@ defmodule DDStringTest do
   end
 
   test "Maximum length checked" do
-    with result = A.new_record(f3: "abcde") do
+    with result = A.new(f3: "abcde") do
       assert_errors(result,
         f3: { "cannot be longer than", max: 4, length: 5 }
       )
@@ -50,7 +50,7 @@ defmodule DDStringTest do
   end
 
   test "Regex matches" do
-    with result = A.new_record(f5: "abc") do
+    with result = A.new(f5: "abc") do
       assert_errors(result,
         f5: { "must match the pattern", re: "~r/2/" }
       )
@@ -58,7 +58,7 @@ defmodule DDStringTest do
   end
 
   test "A record with a non string default is converted" do
-    with result = BadDefault.new_record() do
+    with result = BadDefault.new() do
       assert result.values.f1 == "99"
     end
   end
@@ -106,7 +106,7 @@ defmodule DDStringTest do
   end
 
   test "to display value" do
-    with result = A.new_record() do
+    with result = A.new() do
       assert to_string(result) =~ ~r/f1:\s+123/
     end
   end

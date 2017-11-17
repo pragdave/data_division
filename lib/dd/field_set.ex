@@ -1,10 +1,10 @@
-defmodule DD.Record do
+defmodule DD.FieldSet do
 
 
   if Code.ensure_loaded?(Ecto.Changeset) do
-    def from(%Ecto.Changeset{errors: errors, data: data}) do
+    def from(module, %Ecto.Changeset{errors: errors, data: data}) do
       values = module.__defaults |> Map.merge(data)
-      module.__blank_record
+      module.__blank_fieldset
       |> Map.put(:values, values)
       |> Map.put(:errors, errors)
     end
@@ -12,7 +12,7 @@ defmodule DD.Record do
   
   def from(module, new_values) do
     base =
-      module.__blank_record
+      module.__blank_fieldset
       |> Map.put(:values, module.__defaults)
 
     update(module, base, new_values)

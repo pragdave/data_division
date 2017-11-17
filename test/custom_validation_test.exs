@@ -38,26 +38,26 @@ defmodule DD.CustomValidationTest do
     defmodule A do
       use DD
       
-      defrecord do
+      deffieldset do
         int(:even1, default: 2, validate_with: EvenValidator)
         int(:even2, default: 2, validate_with: &Validations.is_even/1)
       end
     end
 
     test "with no errors" do
-      result = A.new_record()
+      result = A.new()
       assert result.errors == []
       assert result.values.even1 == 2
       assert result.values.even2 == 2
     end
 
     test "using module" do
-      result = A.new_record(even1: 3)
+      result = A.new(even1: 3)
       assert_errors(result, even1: {"must be even..", []})
     end
 
     test "using function" do
-      result = A.new_record(even2: 3)
+      result = A.new(even2: 3)
       assert_errors(result, even2: {"must be even!!", []})
     end
   end
@@ -68,7 +68,7 @@ defmodule DD.CustomValidationTest do
     defmodule B do
       use DD
       
-      defrecord do
+      deffieldset do
         int(:fizzbuzz, validate_with: [
               &Validations.multiple_of_3/1,
               &Validations.multiple_of_5/1
@@ -77,24 +77,24 @@ defmodule DD.CustomValidationTest do
     end
 
     test "with no errors" do
-      result = B.new_record(fizzbuzz: 15)
+      result = B.new(fizzbuzz: 15)
       assert result.errors == []
       assert result.values.fizzbuzz == 15
     end
 
     test "with error on last" do
-      result = B.new_record(fizzbuzz: 3)
+      result = B.new(fizzbuzz: 3)
       assert_errors(result, fizzbuzz: {"is not a multiple of 5", value: 3})
     end
 
 
     test "with error on first" do 
-      result = B.new_record(fizzbuzz: 5)
+      result = B.new(fizzbuzz: 5)
       assert_errors(result, fizzbuzz: {"is not a multiple of 3", value: 5})
     end
 
     test "with error on both only returns first" do 
-      result = B.new_record(fizzbuzz: 7)
+      result = B.new(fizzbuzz: 7)
       assert_errors(result, fizzbuzz: {"is not a multiple of 3", value: 7})
     end
   end
@@ -102,24 +102,24 @@ defmodule DD.CustomValidationTest do
   test "invalid validators are detected 1" do
     defmodule C do
       use DD
-      defrecord do
+      deffieldset do
         string(:a, validate_with: Wombat)
       end
     end
     assert_raise(RuntimeError, ~r/validate_with: Wombat/, fn ->
-      C.new_record(a: "ccc")
+      C.new(a: "ccc")
     end)
   end
 
   test "invalid validators are detected 2" do
     defmodule C do
       use DD
-      defrecord do
+      deffieldset do
         string(:a, validate_with: 123)
       end
     end
     assert_raise(RuntimeError, ~r/validate_with: 123/, fn ->
-      C.new_record(a: "ccc")
+      C.new(a: "ccc")
     end)
   end
 

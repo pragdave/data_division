@@ -1,6 +1,6 @@
 defmodule DD.Impl do
   
-  defmacro defrecord(do: field_list) do
+  defmacro deffieldset(do: field_list) do
 
     field_list = normalize_field_list(field_list)
     defaults = extract_defaults_from(field_list)
@@ -21,37 +21,40 @@ defmodule DD.Impl do
 
   end
 
-  defimpl(Phoenix.HTML.FormData, for: Any) do
-    defdelegate to_form(record, opts),                to: DD.FormData
-    defdelegate to_form(record, a, b, opts),          to: DD.FormData
-    defdelegate input_validations(data, form, field), to: DD.FormData
-    defdelegate input_value(data, form, field),       to: DD.FormData
-    defdelegate input_type(data, form, field),        to: DD.FormData
+
+  if Code.ensure_loaded?(Phoenix.HTML.FormData) do
+    defimpl(Phoenix.HTML.FormData, for: Any) do
+      defdelegate to_form(fieldset, opts),              to: DD.FormData
+      defdelegate to_form(fieldset, a, b, opts),        to: DD.FormData
+      defdelegate input_validations(data, form, field), to: DD.FormData
+      defdelegate input_value(data, form, field),       to: DD.FormData
+      defdelegate input_type(data, form, field),        to: DD.FormData
+    end
   end
 
   defimpl(String.Chars, for: Any) do
-    defdelegate to_string(record), to: DD.Record.ToString
+    defdelegate to_string(fieldset), to: DD.FieldSet.ToString
   end
   
   defmacro __using__(_) do
     quote do
       require Protocol
       
-      import DD.Impl, only: [ defrecord: 1 ]
+      import DD.Impl, only: [ deffieldset: 1 ]
       
       defstruct values: nil, errors: %{}, fields: %{}
 
       Protocol.derive(Phoenix.HTML.FormData, __MODULE__)
       Protocol.derive(String.Chars,          __MODULE__)
 
-      def __blank_record, do: %__MODULE__{}
+      def __blank_fieldset, do: %__MODULE__{}
       
-      def new_record(values \\ []) do
-        DD.Record.from(__MODULE__, values)
+      def new(values \\ []) do
+        DD.FieldSet.from(__MODULE__, values)
       end
 
       def update(current = %__MODULE__{}, new_values) do
-        DD.Record.update(__MODULE__, current, new_values)
+        DD.FieldSet.update(__MODULE__, current, new_values)
       end
 
       def valid?(%{ errors: %{}}), do: true

@@ -14,12 +14,12 @@ error maps, and compatibility with Phoenix `form_for`.
            . . .
         ]
         
-2. Define a record structure:
+2. Define the fields in the structure:
 
         defmodule Planet do
           use DD
           
-          defrecord do
+          deffieldset do
             string :name,      min: 4
             float  :mass
             bool   :habitable, default: false
@@ -27,9 +27,9 @@ error maps, and compatibility with Phoenix `form_for`.
           end
         end
 
-3. Create and populate structures based on this record:
+3. Create and populate structures based on this structure:
 
-       neptune = Planet.new_record(
+       neptune = Planet.new(
            name:       "Neptune", 
            mass:       1.024e26, 
            moon_count: 14)
@@ -38,7 +38,7 @@ error maps, and compatibility with Phoenix `form_for`.
 
        new_neptune = neptune |> Planet.update(moon_count: 15)
        
-5. Is the record valid? If not, what are the errors?
+5. Is the structure valid? If not, what are the errors?
 
        if !Planet.valid?(neptune) do
          for { field, error_msg } <- neptune.errors do
@@ -56,9 +56,9 @@ error maps, and compatibility with Phoenix `form_for`.
    
        <%= form_for @planet, ..... 
        
-## defrecord
+## deffieldset
 
-`defrecord` is a bit like Ecto's `schema`. It defines a struct that
+`deffieldset` is a bit like Ecto's `schema`. It defines a struct that
 contains a place for data (like the planet information above) and a
 place for metadata on field types, options, and so on.
 
@@ -67,7 +67,7 @@ It should be used in a module, just like `defstruct`:
         defmodule Planet do
           use DD
           
-          defrecord do
+          deffieldset do
             string :name,      min: 4
             float  :mass,      min: 0.0
             bool   :habitable, default: false
@@ -75,7 +75,7 @@ It should be used in a module, just like `defstruct`:
           end
         end
     
-This code defines a record called `Planet` with 4 fields. Each field
+This code defines a structure called `Planet` with 4 fields. Each field
 definition starts with the field type, followed by the field name (an
 atom). The rest depends to some extent on the type of the field,
 although all fields support default values.
@@ -88,16 +88,16 @@ type: for strings it is the length, for floats the value.
 
 A list of the available types and their options is [below](#types).
 
-## Using a Record
+## Using the Fields
 
-You create new instances of a record using
-_Name_.`new_record(values)`. The `values` you pass in can be a keyword
+You create new instances of a structure using
+_Name_.`new(values)`. The `values` you pass in can be a keyword
 list, map, or struct. If `values` is a struct of type
 `Ecto.Changeset`, then values and errors are copied directly from it
 into the record.
 
 
-`new_record` returns a structure containing three entries:
+`new` returns a structure containing three entries:
 
 * `values`
 
@@ -116,7 +116,7 @@ into the record.
 
 So, we could do something like:
 
-       neptune = Planet.new_record(
+       neptune = Planet.new(
            name: "Neptune", 
            moon_count: 14)
            
@@ -130,7 +130,7 @@ So, we could do something like:
        
 ## Built-in Types
 
-* All type accept the options:
+* All types accept the options:
 
   * `default:` _a type appropriate value_
   
@@ -142,10 +142,11 @@ So, we could do something like:
 
   * `validate_with:` _a Module or a function_ (or a list of them)
   
-    See _Custom Validations` below.
+    See _Custom Validations_ below.
     
     Note that validation for a particular field stops on the first
-    validation failure.
+    validation failure—once a field has been found to be invalid,
+    no more checks are done on that particular field.
 
 * (`string`)[...]`:`_name_
 
@@ -253,7 +254,7 @@ For example:
 
     defmodule A do
       use DD
-      defrecord do
+      deffieldset do
         int(:even1, default: 2, validate_with: EvenValidator)
         int(:even2, default: 2, validate_with: &Validations.is_even/1)
       end
@@ -271,11 +272,11 @@ A type is simply an Elixir module that:
 3. implements the handful of functions required by that behaviour.
 
 If this module is loaded into your project, then the type becomes
-available in `defrecord` as if it was a function named using the
+available in `deffieldset` as if it was a function named using the
 lowercase form of the last part of the module name. So, in this
 example, you could have
 
-   defrecord do
+   deffieldset do
      string(:name)
      your_type(:orbit_parameters)
    end

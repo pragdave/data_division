@@ -8,7 +8,7 @@ defmodule DDFloatTest do
   
   defmodule WithInts do
     use DD
-    defrecord do
+    deffieldset do
       float(:positive,  default: 123)
       float(:negative,  default: -123)
       float(:string,    default: "123")
@@ -20,7 +20,7 @@ defmodule DDFloatTest do
 
   defmodule WithFloats do
     use DD
-    defrecord do
+    deffieldset do
       float(:positive,  default: 123.0)
       float(:negative,  default: -123.0)
       float(:string,    default: "123.0")
@@ -32,7 +32,7 @@ defmodule DDFloatTest do
 
   defmodule WithMixed do
     use DD
-    defrecord do
+    deffieldset do
       float(:positive,  default: 123.0)
       float(:negative,  default: -123)
       float(:string,    default: "123.0")
@@ -44,14 +44,14 @@ defmodule DDFloatTest do
    
   defmodule BadDefault do
     use DD
-    defrecord do
+    deffieldset do
       float(:f1, default: :abc)
     end
   end
 
   defmodule DisplayValue1 do
     use DD
-    defrecord do
+    deffieldset do
       float(:a, default: 1.25)
     end
   end
@@ -61,7 +61,7 @@ defmodule DDFloatTest do
   ###################### tests ###############################
   
   test "Passing integers to float works" do
-    with result = WithInts.new_record() do
+    with result = WithInts.new() do
       assert result.errors == []
       assert result.values.positive === 123.0
       assert result.values.negative === -123.0
@@ -74,7 +74,7 @@ defmodule DDFloatTest do
   end
 
   test "Passing floats to float works" do
-    with result = WithFloats.new_record() do
+    with result = WithFloats.new() do
       assert result.errors == []
       assert result.values.positive === 123.0
       assert result.values.negative === -123.0
@@ -86,7 +86,7 @@ defmodule DDFloatTest do
   end
   
   test "Passing mixed to float works" do
-    with result = WithMixed.new_record() do
+    with result = WithMixed.new() do
       assert result.errors == []
       assert result.values.positive === 123.0
       assert result.values.negative === -123.0
@@ -98,7 +98,7 @@ defmodule DDFloatTest do
   end
   
   test "Passing strings to float works" do
-    with result = WithMixed.new_record() do
+    with result = WithMixed.new() do
       assert result.errors == []
       result = result |> WithMixed.update(positive: "3.25")
       assert result.errors == []
@@ -107,14 +107,14 @@ defmodule DDFloatTest do
   end
 
   test "Passing invalid strings to float causes an error" do
-    with result = WithMixed.new_record(positive: "1.2 wombats") do
+    with result = WithMixed.new(positive: "1.2 wombats") do
       assert_errors(result,
         positive: { "should be a float", value: "\"1.2 wombats\"" })
     end
   end
   
   test "Minimum checked" do
-    with result = WithFloats.new_record(min2: 1) do
+    with result = WithFloats.new(min2: 1) do
       assert_errors(result,
         min2: { "must be at least", min: 2, value: 1.0 }
       )
@@ -123,7 +123,7 @@ defmodule DDFloatTest do
   end
   
   test "Maximum checked" do
-    with result = WithFloats.new_record(max4: 5) do
+    with result = WithFloats.new(max4: 5) do
       assert_errors(result,
         max4: { "cannot be greater than", max: 4.0, value: 5.0 }
         )
@@ -131,13 +131,13 @@ defmodule DDFloatTest do
   end
   
   test "A record with an invalid default is marked in error" do
-    with result = BadDefault.new_record() do
+    with result = BadDefault.new() do
       assert_errors(result, f1: {"should be a float", value: ":abc"})
     end
   end
 
   test "Default to_display_value works" do
-    with result = DisplayValue1.new_record() do
+    with result = DisplayValue1.new() do
       assert to_string(result) =~ ~r/a:\s+1\.25/
     end
   end
@@ -146,7 +146,7 @@ defmodule DDFloatTest do
     assert_raise(RuntimeError, ~r/invalid float/, fn ->
       defmodule BadOpt do
         use DD
-        defrecord do
+        deffieldset do
           float(:a, default: 2, min: "wombat")
         end
       end
@@ -156,7 +156,7 @@ defmodule DDFloatTest do
     assert_raise(RuntimeError, ~r/invalid float/, fn ->
       defmodule BadOpt do
         use DD
-        defrecord do
+        deffieldset do
           float(:a, default: 2, max: "wombat")
         end
       end

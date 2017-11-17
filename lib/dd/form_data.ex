@@ -145,7 +145,7 @@ defmodule DD.FormData do
   end
   
   defp form_for_hidden(record = %{__struct__: module}) do
-    DD.Record.hidden_fields(module)
+    DD.FieldSet.hidden_fields(module)
     |> Enum.map(fn name -> { name, record.values[name] } end)
   end
 
@@ -166,7 +166,7 @@ defmodule DD.FormData do
 
   defp hidden_fields_present_and_have_values(record = %{__struct__: module}) do
     IO.puts "passing #{module} to hidden"
-    DD.Record.hidden_fields(module)
+    DD.FieldSet.hidden_fields(module)
     |> check_hiddens_fields_present(record)
   end
 

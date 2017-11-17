@@ -2,17 +2,18 @@ defmodule DD.MixProject do
   use Mix.Project
   
   @name    :dd
-  @version "0.0.1"
+  @version "0.0.2"
 
   @deps [
-    { :gettext,      ">= 0.0.0" },
+    { :ex_doc,       ">=0.0.0",  only:    :dev  },
+    { :gettext,      ">= 0.0.0"                 },
     { :phoenix_html, ">= 0.0.0", optional: true },
-    { :todo,         ">= 1.0.0" },
-    { :excoveralls,  ">= 0.0.0", only: :test },
+    { :todo,         ">= 1.0.0", optional: true },
+    { :excoveralls,  ">= 0.0.0", only:    :test },
   ]
 
   @description """
-  Create data records (aka structs) with validation and
+  Create fieldsets (aka structs) with validation and
   Phoenix form_for compatibility, making it easier to 
   separate resource applications from your web frontend.
   """
