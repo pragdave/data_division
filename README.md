@@ -55,7 +55,37 @@ error maps, and compatibility with Phoenix `form_for`.
    template:
    
        <%= form_for @planet, ..... 
-       
+
+
+## Why?
+
+If you want to use Phoenix forms to create and update data accessed
+using Ecto, then you have to have ecto running in the Phoenix
+application.
+
+That's not how I want to design applications. I want my business logic
+in its own applications, and I want Phoenix to be one of potentially
+many frontends to it.
+
+For example, an online store might perform overnight accounting
+functions. These functions will want to use the same business logic
+used by the store (for example, to access orders), but it doesn't have
+a web UI. The accounting code should be able to make the same calls
+into the business layer as the frontend, but without having the
+frontend in the middle.
+
+The Data Division library lets you do this. It lets you define things
+that are like Ecto schemas, and populate from from an Ecto changeset.
+
+You can then pass the result to other applications that are not
+running Ecto. Because a Data Division fieldset implements the Phoenix
+`Form.Data` protocol, you can use them with Phoenix forms.
+
+The net result is that you can decouple presentation from business
+logic.
+
+
+
 ## deffieldset
 
 `deffieldset` is a bit like Ecto's `schema`. It defines a struct that
@@ -284,4 +314,16 @@ example, you could have
 See the module doc for [Data.Type](,,,) for details.
    
        
-       
+
+## Working with Ecto
+
+The `MyFieldset.new/1` function normally takes a map, struct, or
+keyword list containing key value pairs. It copies the values into the
+fieldset, then performs validations and sets any errors.
+
+You can also pass it an Ecto changeset. In this case, it copies the
+values from the changeset data, and copies the errors from the
+changeset errors. 
+
+### ToDo: add support for `deffieldset based_on My.Schema`
+
