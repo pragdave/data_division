@@ -1,7 +1,9 @@
 defmodule DD.FieldSet.ToString do
 
   alias Inspect.Algebra, as: IA
-  use TODO
+  if Code.ensure_loaded?(TODO) do
+    Code.eval_quoted(quote do: use TODO)
+  end
   
   @todo "format these properly"
   

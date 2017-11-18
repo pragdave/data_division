@@ -1,10 +1,7 @@
 defmodule DD.Impl do
-  
-  defmacro deffieldset(do: field_list) do
 
-    field_list = normalize_field_list(field_list)
-    defaults = extract_defaults_from(field_list)
 
+  defp generate_fieldset(field_list, defaults) do
     quote do
       try do
 
@@ -17,11 +14,27 @@ defmodule DD.Impl do
         :ok
       end
     end
-       
+  end
+  
+  defmacro deffieldset(do: field_list) do
+    field_list = normalize_field_list(field_list)
+    defaults = extract_defaults_from(field_list)
 
+    generate_fieldset(field_list, defaults)
   end
 
+  defmacro deffieldset(based_on: module) do
+    { module, _ } = module |> Code.eval_quoted()
+    field_list = fieldlist_from_struct(module)
+    defaults = %{}
+    
+    generate_fieldset(field_list, defaults)
+  end
 
+  defmacro deffieldset(x) do
+    raise inspect x
+  end
+  
   if Code.ensure_loaded?(Phoenix.HTML.FormData) do
     defimpl(Phoenix.HTML.FormData, for: Any) do
       defdelegate to_form(fieldset, opts),              to: DD.FormData
@@ -44,7 +57,9 @@ defmodule DD.Impl do
       
       defstruct values: nil, errors: %{}, fields: %{}
 
-      Protocol.derive(Phoenix.HTML.FormData, __MODULE__)
+      if Code.ensure_loaded?(Phoenix.HTML.FormData) do
+        Protocol.derive(Phoenix.HTML.FormData, __MODULE__)
+      end
       Protocol.derive(String.Chars,          __MODULE__)
 
       def __blank_fieldset, do: %__MODULE__{}
@@ -153,4 +168,75 @@ defmodule DD.Impl do
         Keyword.put(spec, :optional, false)
     end
   end
+
+
+  # This uses an existing struct to define the fieldset.
+  #
+  # If it is just a struct, the types and defaults are
+  # taken from its fields.
+  #
+  # If it is an ecto schema, the its metadata is used
+
+  defp fieldlist_from_struct(struct) do
+    raise inspect %struct{}
+    # if Kernel.function_exported?(struct, :__schema__, 1) do
+    #   fieldlist_from_schema(struct)
+    # else
+    #   fieldlist_from_pure_struct(struct) 
+    # end
+    []
+  end
+
+  defp fieldlist_from_schema(schema) do
+    raise "111"
+    schema.__schema__(:fields)
+    |> inspect |> raise
+    |> Enum.map(&schema_field_to_fieldset_field(&1, schema))
+    |> inspect |> raise
+  end
+
+  defp fieldlist_from_pure_struct(struct) do
+    raise inspect "222"
+    struct.__struct__
+    |> Enum.map(fn { name, default } ->
+      type = typeof(default)
+
+      {
+        name,     
+
+        %{
+          type:    type_module = DD.Type.find_definition(type),
+          options: [
+            default: default
+          ]
+        }
+      }
+      
+    end)
+  end
+
+  defp schema_field_to_fieldset_field(name, schema) do
+    {
+      name,
+
+      %{
+        type: :string,
+        options: [
+        ]
+      }
+    }
+  end
+  
+  def typeof(default) when is_binary(default),  do: :string
+  def typeof(default) when is_integer(default), do: :integer
+  def typeof(default) when is_float(default),  do: :float
+  def typeof(true),  do: :bool
+  def typeof(false), do: :bool
+  def typeof(val) do
+    IO.puts """
+    warning: #{inspect val} has an unsupported type.
+    """
+    :string
+  end
+  
 end
