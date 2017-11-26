@@ -8,7 +8,6 @@ defmodule DD.MixProject do
     { :ex_doc,       ">= 0.0.0", only:    :dev  },
     { :gettext,      ">= 0.0.0"                 },
     { :phoenix_html, ">= 0.0.0", optional: true },
-    { :todo,         ">= 1.0.0", optional: true },
     { :excoveralls,  ">= 0.0.0", only:    :test },
   ]
 

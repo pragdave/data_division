@@ -9,6 +9,10 @@ defmodule DD.FieldSet do
       |> Map.put(:errors, errors)
     end
   end
+
+  def from(module, struct = %_{}) do
+    from(module, struct |> Map.from_struct)
+  end
   
   def from(module, new_values) do
     base =
@@ -45,10 +49,16 @@ defmodule DD.FieldSet do
     values
     |> Enum.map(fn {name, value} ->
       name = name |> to_atom()
-      options = fields[name].options
-      value = fields[name].type.from_display_value(value, options)
-      { name, value }
+      case fields[name] do
+        nil ->
+          nil
+        spec ->
+          options = spec.options
+          value   = spec.type.from_display_value(value, options)
+          { name, value }
+      end
     end)
+    |> Enum.filter(&(&1))
     |> Enum.into(%{})
   end
 

@@ -3,7 +3,7 @@ defmodule DD.Impl do
   defmacro deffieldset(do: field_list) do
 
     field_list = normalize_field_list(field_list)
-    defaults = extract_defaults_from(field_list)
+    defaults   = extract_defaults_from(field_list)
 
     quote do
       try do
@@ -44,7 +44,9 @@ defmodule DD.Impl do
       
       defstruct values: nil, errors: %{}, fields: %{}
 
-      Protocol.derive(Phoenix.HTML.FormData, __MODULE__)
+      if Code.ensure_loaded?(Phoenix.HTML) do
+        Protocol.derive(Phoenix.HTML.FormData, __MODULE__)
+      end
       Protocol.derive(String.Chars,          __MODULE__)
 
       def __blank_fieldset, do: %__MODULE__{}

@@ -321,6 +321,15 @@ The `MyFieldset.new/1` function normally takes a map, struct, or
 keyword list containing key value pairs. It copies the values into the
 fieldset, then performs validations and sets any errors.
 
+The Repo functions return a struct, so DD will copy in any values 
+from this that it has a field definition for:
+
+    def find_by_id(id) do
+      Repo.get(Table, id)
+      |> Notebook.Fields.new
+    end
+
+
 You can also pass it an Ecto changeset. In this case, it copies the
 values from the changeset data, and copies the errors from the
 changeset errors. 

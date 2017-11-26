@@ -74,9 +74,7 @@ defmodule DD.FormData do
 
   """
 
-  use TODO
-
-  @todo "work out ids"
+  # TODO: "work out ids"
   
   def to_form(record, opts) do
 
@@ -97,7 +95,7 @@ defmodule DD.FormData do
     }
   end
 
-  @todo "work out if I even need to implement this"
+  # TODO: "work out if I even need to implement this"
   def to_form(a, b, c, d) do
     IO.puts "to_form/2 #{inspect [a,b,c,d]}"
   end
@@ -119,7 +117,7 @@ defmodule DD.FormData do
     |> field_spec.type.to_display_value(field_spec)
   end
 
-  @todo "implement"
+  # TODO:  "implement"
   def input_type(%{types: _types}, _, field) do
     IO.puts "input type #{inspect field}"
     # type = Map.get(types, field, :string)
@@ -138,7 +136,8 @@ defmodule DD.FormData do
     # end
   end
 
-  @todo "Implement"
+  # TODO:  "Implement"
+  
   def input_validations(%{required: _required, validations: _validations} = _changeset, _, field) do
 
     IO.puts "input validations #{inspect field}"

@@ -1,9 +1,8 @@
 defmodule DD.FieldSet.ToString do
 
   alias Inspect.Algebra, as: IA
-  use TODO
-  
-  @todo "format these properly"
+
+  # TODO: "format these properly"
   
   def to_string(record) do
     values_to_string(record)
