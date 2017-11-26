@@ -2,7 +2,7 @@ defmodule DD.MixProject do
   use Mix.Project
   
   @name    :dd
-  @version "0.0.2"
+  @version "0.0.3"
 
   @deps [
     { :ex_doc,       ">= 0.0.0", only:    :dev  },

@@ -85,7 +85,7 @@ defmodule DD.FormData do
     %Phoenix.HTML.Form{
       source:  record,
       impl:    __MODULE__,
-      id:      name,
+      id:      DD.FieldSet.find_id_field(record) || name,
       name:    name,
       errors:  record.errors,
       data:    record.values,
@@ -148,10 +148,11 @@ defmodule DD.FormData do
     |> Enum.map(fn name -> { name, record.values[name] } end)
   end
 
+  # assume the name is the name of the app
   defp form_for_name(%{__struct__: module}) do
     module
     |> Module.split()
-    |> List.last()
+    |> hd()
     |> Macro.underscore()
   end
 

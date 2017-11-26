@@ -17,7 +17,7 @@ defmodule DD.Validate do
 
   defp remove_entries_for_fields_with_no_errors(errors) do
     errors
-    |> Enum.filter(fn { _, error } -> error end)
+    |> Enum.filter(fn { _, { error, _ } } -> error end)
   end
 
 
@@ -34,7 +34,7 @@ defmodule DD.Validate do
         type_specific_validations(defn.type, value, defn.options) ||
         custom_validators(value, defn.options[:validate_with])
     
-      { record, [ { name, error } | result ] }
+      { record, [ { name, { error, validation: :required } } | result ] }
     end
   end
 

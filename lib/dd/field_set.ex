@@ -37,11 +37,18 @@ defmodule DD.FieldSet do
 
   
   def hidden_fields(module) do
-    module.fields
+    module.__fields
     |> Enum.filter(fn {_name, defn} -> defn.options[:hidden] end)
     |> Enum.map(&elem(&1, 0))
   end
 
+
+  def find_id_field(record) do
+    id = Enum.find(record.fields,
+      fn {_name, defn} -> defn.type == DD.Type.ID end)
+    id && elem(id, 0)
+  end
+    
   
   ############################################################
 

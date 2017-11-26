@@ -21,17 +21,5 @@ defmodule DDIdTest do
       assert result.values.id == nil
     end
   end
-  test "invalid string values are detected" do
-    defmodule B do
-      use DD
-      deffieldset do
-        id(:a)
-      end
-    end
-
-    result = B.new(a: "123 abc")
-    assert_errors(result,
-      a: { "should be an integer", value: "\"123 abc\"" })
-  end
 
 end

@@ -11,33 +11,12 @@ defmodule DD.Type.Id do
   end
   
 
-  def validate(value, specs) when is_binary(value) do
-    try do
-      String.to_integer(value)
-      |> validate(specs)
-    rescue
-      ArgumentError ->
-        { "%{value} should be an integer", value: inspect(value) }
-    end
-  end
-  
-  def validate(value, _) do
-    { "%{value} should be an integer", value: inspect(value) }
+  def validate(_, _) do
+    nil
   end
   
   def to_display_value(value, _spec) do
-    value |> to_string()
-  end
-
-  # if the conversion fails, pass in whatever we have, because
-  # validation will catch it
-  def from_display_value(value, _options)  when is_binary(value) do
-    try do
-      String.to_integer(value)
-    rescue
-      ArgumentError ->
-        value
-    end
+    value |> inspect()
   end
 
   def from_display_value(value, _options) do

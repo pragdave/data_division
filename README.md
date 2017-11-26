@@ -236,6 +236,20 @@ So, we could do something like:
   * outgoing values: the first true or false value in `ahow_as:`
     is used.
 
+* (`id`)[...]`:`_name_
+
+  Options:
+  
+  * none
+
+  Conversion:
+  
+  * none
+
+A field of type `id` is byu default both hidden and optional. It is
+recognized as the primary key when generating Phoenix forms.
+
+
 * etc  
 
 ### Custom Validations
